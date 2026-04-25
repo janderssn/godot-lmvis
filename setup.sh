@@ -2,7 +2,7 @@
 # Quick setup script for Åre Steep
 # Run this from the project root directory
 
-cd "$(dirname "$0")/.."
+cd "$(dirname "$0")"
 
 echo "========================================"
 echo "  Åre Steep - Environment Setup"

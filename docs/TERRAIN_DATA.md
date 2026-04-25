@@ -136,7 +136,7 @@ are-steep-game/
 ├── src/
 │   ├── terrain_chunk_loader.gd  # Loads all chunks
 │   ├── terrain_chunk.gd         # Generates mesh from height data
-│   └── orbit_camera.gd          # Camera controller
+│   └── terrain_camera.gd        # Orbit / fly camera
 ├── scripts/
 │   ├── download_terrain.py      # STAC API client
 │   └── convert_terrain.py       # GeoTIFF converter

@@ -85,57 +85,30 @@ python scripts/convert_terrain.py \
 
 ## Godot Development
 
-### Project Structure
-```
-are-steep-game/
-├── project.godot          # Main project file
-├── src/                   # GDScript source
-│   ├── main.gd
-│   ├── skier_controller.gd
-│   ├── terrain_chunk_loader.gd
-│   ├── terrain_chunk.gd
-│   └── follow_camera.gd
-├── scenes/                # Godot scene files
-│   └── main.tscn         # Create this
-├── assets/                # Models, textures, sounds
-├── terrain_data/          # Heightmap data
-│   ├── raw/              # GeoTIFF files (don't commit)
-│   └── raw_height/       # Godot-ready float32 chunks + dataset manifest
-└── scripts/              # Python pipeline
-    ├── download_terrain.py
-    ├── convert_terrain.py
-    ├── quick_download.py
-    └── setup.py
-```
+See `README.md` for the canonical project layout. The terrain-relevant
+scripts and their key tunables live here:
 
-### Key Configuration Values
-
-**Skier Controller (`skier_controller.gd`):**
-```gdscript
-max_speed = 40.0           # m/s (144 km/h)
-turn_speed = 3.0           # Turn responsiveness
-edge_control_power = 2.0   # Carving strength
-friction_snow = 0.02       # Low friction
-gravity = 9.8              # m/s²
-jump_force = 8.0           # Jump height
-```
-
-**Terrain Loader (`terrain_chunk_loader.gd`):**
+**Terrain Loader (`src/terrain_chunk_loader.gd`):**
 ```gdscript
 height_directory = "res://terrain_data/raw_height"
-load_radius = 3            # Chunks around player
-unload_radius = 5          # Chunks to keep
-chunk_size = 256           # Pixels per chunk
-world_scale = 1.0          # Meters per pixel
-height_scale = 100.0       # Height multiplier
+load_radius = 6                    # chunks around the focus that get a mesh
+unload_radius = 8                  # chunks to keep before freeing
+chunk_size = 256                   # samples per chunk side
+overlap = 1                        # within-tile shared edge sample
+visual_lod_step = 4                # mesh sampling step (visual)
+collision_lod_step = 8             # mesh sampling step (collision)
+max_data_loads_per_frame = 16      # per-frame heightmap load budget
+max_mesh_gens_per_frame = 4        # per-frame mesh build budget
 ```
 
-**Camera (`follow_camera.gd`):**
+**Camera (`src/terrain_camera.gd`):**
 ```gdscript
-follow_distance = 8.0      # Distance behind player
-follow_height = 3.0        # Height above player
-position_smooth = 5.0      # Position lag
-rotation_smooth = 8.0      # Rotation lag
+orbit_radius = 850.0       # m, orbit distance
+orbit_height = 260.0       # m, orbit height above focus
+orbit_speed = 0.14         # rad/s automatic spin
+fly_speed = 220.0          # m/s
+fly_boost_multiplier = 3.0
+mouse_sensitivity = 0.003
 ```
 
 ## Git Commands

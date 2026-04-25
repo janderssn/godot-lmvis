@@ -1,244 +1,99 @@
 # Åre Steep
 
-A skiing and snowboarding game set in Åre, Sweden, using real 1-meter resolution terrain data from Lantmäteriet (the Swedish mapping authority).
+Real-terrain rendering foundation for a skiing/snowboarding game set in Åre, Sweden. Uses 1-meter resolution heightmap data from Lantmäteriet (Swedish mapping authority), streamed as chunks into Godot 4 with seamless cross-chunk meshing and slope/elevation-based shading.
 
-Inspired by **Steep** (Ubisoft), this game features:
-- Physics-based skiing and snowboarding
-- Real Åre terrain with dynamic chunk loading
-- Trick system with grabs, spins, and flips
-- Race challenges and checkpoints
+The current build is a **terrain-only foundation** — orbit/fly camera over the Åreskutan summit. Player physics, tricks, and game systems are planned on top of it.
 
-## Project Structure
+## Project Layout
 
 ```
-are-steep-game/
-├── project.godot          # Godot project configuration
-├── QUICKSTART.md          # 5-minute quick start guide
-├── README.md              # This file
-├── setup.sh               # Environment setup checker
-├── assets/                # Game assets (models, textures, sounds)
-├── docs/                  # Documentation
-│   ├── LANTMATERIET_SETUP.md  # Detailed API setup guide
-│   └── CHEATSHEET.md      # Commands reference
-├── scenes/                # Godot scene files
-├── src/                   # GDScript source code
-│   ├── main.gd           # Main game scene
-│   ├── terrain_chunk.gd       # Individual terrain chunk
-│   ├── terrain_chunk_loader.gd  # Dynamic terrain streaming
-│   ├── skier_controller.gd  # Player physics controller
-│   └── follow_camera.gd     # Third-person camera
-├── scripts/               # Python pipeline scripts
-│   ├── download_terrain.py  # STAC API client (HTTP Basic Auth)
-│   ├── convert_terrain.py   # GeoTIFF → Godot converter
-│   ├── quick_download.py    # One-command download helper
-│   ├── setup.py            # Environment checker
-│   └── requirements.txt     # Python dependencies
-└── terrain_data/          # Downloaded and converted terrain data
-    ├── raw/              # Original GeoTIFF files from STAC
-    └── raw_height/       # Streamable float32 terrain chunks + dataset manifest
+.
+├── project.godot              # Godot 4 project
+├── scenes/
+│   └── main.tscn             # Foundation scene (orbit + fly cam over Åreskutan)
+├── src/
+│   ├── main.gd               # Wires terrain loader + camera, focuses on Toppstugan
+│   ├── terrain_camera.gd     # Orbit / fly camera with mouse-look in fly mode
+│   ├── terrain_chunk.gd      # Per-chunk heightmap → ArrayMesh + collision
+│   └── terrain_chunk_loader.gd  # Streaming, halo loading, cross-chunk sampling
+├── scripts/                   # Python pipeline: download + convert terrain
+├── docs/
+│   ├── TERRAIN_DATA.md       # Heightmap chunk format + dataset manifest
+│   ├── LANTMATERIET_SETUP.md # Geotorget account + STAC API setup
+│   └── CHEATSHEET.md         # Common command reference
+├── terrain_data/              # Generated heightmap data (gitignored, except manifests)
+└── setup.sh                   # Environment sanity check
 ```
 
 ## Prerequisites
 
-- **Godot 4.3+** (https://godotengine.org)
-- **Python 3.10+** with pip
-- **Lantmäteriet Geotorget account** with access to Markhöjdmodell (free)
+- **Godot 4.3+** ([godotengine.org](https://godotengine.org))
+- **Python 3.10+** with pip (only needed to (re)generate terrain)
+- **Lantmäteriet Geotorget account** with access to *Markhöjdmodell Nedladdning* (free, [register here](https://geotorget.lantmateriet.se))
 
 ## Quick Start
 
-### 1. Clone/Download the Project
-
 ```bash
-cd /path/to/are-steep-game
-```
-
-### 2. Install Python Dependencies
-
-```bash
+# 1. Install Python deps for the terrain pipeline
 pip install -r scripts/requirements.txt
-```
 
-### 3. Get Lantmäteriet Access
-
-1. Register at https://geotorget.lantmateriet.se
-2. Order access to **"Markhöjdmodell Nedladdning"** (free)
-3. Set environment variables with your credentials:
-
-```bash
+# 2. Set Lantmäteriet credentials
 export LANTMATERIET_USERNAME="your_email@example.com"
 export LANTMATERIET_PASSWORD="your_password"
-```
 
-See `docs/LANTMATERIET_SETUP.md` for detailed instructions.
-
-### 4. Verify Setup
-
-```bash
+# 3. Verify environment
 ./setup.sh
-```
 
-Should show all green checkmarks ✅
-
-### 5. Download Terrain Data
-
-Quick option - just central Åre:
-```bash
+# 4. Download + convert terrain (central Åre, ~200–400 MB)
 python scripts/quick_download.py central --process
+
+# 5. Open project.godot in Godot and press F5
 ```
 
-This downloads ~200-400MB and converts it automatically.
-
-Available areas:
-- `central` - Central Åre, Kabinbanan (recommended for testing)
-- `bjornen` - Björnen area
-- `duved` - Duved area  
-- `tegefjall` - Tegefjäll
-- `full` - All of Åre ski area (~1-2GB)
-
-### 6. Open in Godot
-
-1. Launch Godot 4.3+
-2. Click "Import" and select the `project.godot` file
-3. Open the project
-
-### 7. Open the Foundation Scene
-
-`scenes/main.tscn` is included and set as the main scene. It loads the streamed Åre terrain, focuses the camera on the Åreskutan summit / Toppstugan area, and lets you switch between orbit and fly controls.
-
-### 8. Run!
-
-Press F5 or the play button in Godot.
+See `docs/LANTMATERIET_SETUP.md` for credential details, `docs/TERRAIN_DATA.md` for the chunk format, and `docs/CHEATSHEET.md` for download/convert commands.
 
 ## Controls
 
-| Action | Keyboard | Gamepad |
-|--------|----------|---------|
-| Orbit / Strafe | A/D or ←/→ | Left Stick X |
-| Zoom / Move Forward | W or ↑ | Left Stick Y- |
-| Zoom Out / Move Back | S or ↓ | Left Stick Y+ |
-| Raise Camera / Fly Up | Space | A/Cross |
-| Lower Camera / Fly Down | Shift | RT/R2 |
-| Toggle Orbit/Fly | Tab | - |
-| Fly Boost | Ctrl | - |
+| Action | Key |
+|---|---|
+| Toggle orbit ↔ fly | `Tab` |
+| Orbit / strafe | `A` `D` |
+| Zoom / move forward·back | `W` `S` |
+| Raise camera / fly up | `Space` |
+| Lower camera / fly down | `Shift` |
+| Fly boost | `Ctrl` |
+| Fly look | Mouse (click to capture, `Esc` to release) |
 
-## How It Works
+## How the Terrain Renders
 
-### Terrain Data Pipeline
+The rendering pipeline is engineered around the awkward shape of Lantmäteriet tiles (2500 m × 2500 m, 1 m resolution, zero-padded at edges):
 
-1. **Download**: Query the STAC API for tiles within a bounding box
-2. **Convert**: GeoTIFF → 16-bit PNG chunks with metadata
-3. **Stream**: Godot loads chunks dynamically based on player position
-4. **Stream**: Godot loads terrain around the active camera focus
+1. **Chunking** — each tile is split into 256×256 overlapping chunks (`scripts/convert_terrain.py`). The right/bottom edge chunks of a tile are zero-padded where source data runs out.
+2. **Streaming** — `terrain_chunk_loader.gd` keeps a spatial index of all chunks, finds the ones near the camera focus, and runs a two-phase load: heightmaps first (so neighbors are available), meshes second.
+3. **Valid-extent meshing** — each chunk scans its heightmap for zero-padded rows/columns, then meshes only up to the first column with real data, plus one extra vertex queried from the adjacent tile via `loader.sample_height_int()`. That makes adjacent tiles meet seamlessly even when their boundaries are 205 units apart instead of the expected 255.
+4. **Cross-chunk normals** — vertex normals come from heightmap central differences. Boundary normals query neighbor chunks through the loader, so chunks on either side of a seam compute the same normal at the shared world position.
+5. **Indexed mesh** — `ArrayMesh` with packed vertex/normal/index arrays (instead of `SurfaceTool`) for fast per-chunk generation and ~4× fewer vertices.
+6. **Per-frame budgets** — `max_data_loads_per_frame` and `max_mesh_gens_per_frame` (both `@export`) cap streaming work to keep flycam motion smooth; bulk mode loads everything at scene start.
 
-### Authentication
+The shader (`terrain_chunk.gd`, inline) blends grass → tundra → rock → cliff based on world-space elevation and slope (computed in the vertex shader from `MODEL_MATRIX` so camera tilt doesn't change the shading).
 
-The Lantmäteriet STAC API uses **HTTP Basic Authentication** with your Geotorget username (email) and password. Credentials are passed via:
-- Environment variables: `LANTMATERIET_USERNAME` and `LANTMATERIET_PASSWORD`
-- Or command line: `--user` and `--pass` flags (not recommended)
+## Coordinate System
 
-### Physics
+- **Real world** — SWEREF 99 TM (EPSG:3006), 1 m per pixel.
+- **Game world** — Godot Y-up, 1 unit = 1 m. World X = (easting − dataset origin), world Z = (max_northing − northing) so +Z corresponds to south.
+- `terrain_chunk_loader.sweref_to_local(easting, northing)` maps real coordinates into the game world. The Åreskutan summit / Toppstugan is hardcoded in `main.gd`.
 
-The skier controller uses a custom physics system:
-- Gravity pulls down the slope (not just down)
-- Edge control allows carving turns
-- Air physics with limited steering
-- Crash detection based on impact and angle
+## Roadmap
 
-### Coordinate System
-
-- **Real world**: SWEREF 99 TM (EPSG:3006)
-- **Game world**: Godot Y-up, 1 unit = 1 meter
-- **Åre center**: approximately E 377000, N 7035000
-
-## Development Roadmap
-
-- [x] Project structure and Godot setup
-- [x] Terrain data pipeline (STAC API + convert)
-- [x] Dynamic chunk loading system
-- [x] Basic skiing physics controller
-- [x] Third-person follow camera
+- [x] Terrain data pipeline (download + convert)
+- [x] Streamed chunk loading with seamless cross-tile meshing
+- [x] Orbit + fly camera
+- [ ] Skier physics (`CharacterBody3D` against the streamed collision)
+- [ ] Third-person follow camera
 - [ ] Trick system (grabs, spins, flips)
-- [ ] Ragdoll physics for crashes
-- [ ] Race gates and checkpoints
-- [ ] Score system
-- [ ] Multiplayer support
-- [ ] Åre-specific landmarks (Kabinbanan, etc.)
-
-## Manual Terrain Download
-
-If you need more control:
-
-```bash
-# List available collections
-python scripts/download_terrain.py --list-collections
-
-# Download specific region
-python scripts/download_terrain.py --region are_central --output terrain_data/raw
-
-# Download with custom bounding box (SWEREF 99 TM coordinates)
-python scripts/download_terrain.py --bbox 377000 7035000 379500 7037500 --output terrain_data/raw
-
-# Dry run - see what would be downloaded
-python scripts/download_terrain.py --region are_central --dry-run
-```
-
-## Convert Terrain
-
-```bash
-# Convert all downloaded tiles to chunks
-python scripts/convert_terrain.py --batch \
-  --input terrain_data/raw \
-  --output terrain_data/raw_height \
-  --format chunks \
-  --chunk-format raw \
-  --chunk-size 256
-
-# Convert to single PNG (for small areas)
-python scripts/convert_terrain.py \
-  --input terrain_data/raw/mh-1m_xxx.tif \
-  --output terrain_data/raw_height \
-  --format png
-```
+- [ ] Race gates / checkpoints
+- [ ] Åre landmarks (Kabinbanan, Toppstugan, lifts)
 
 ## License
 
-The terrain data is from Lantmäteriet and is available under their terms for valuable data (CC BY 4.0). See https://www.lantmateriet.se
-
-The game code is released under MIT License.
-
-## Troubleshooting
-
-### "401 Unauthorized"
-- Check your username and password
-- Verify you have ordered access to Markhöjdmodell in Geotorget
-- Ensure your account is verified (check email)
-
-### "No chunks manifest found"
-Make sure you've run the convert script and the `terrain_data/raw_height` folder contains `chunks_manifest.json`.
-
-### Terrain not loading
-- Check that the TerrainLoader's `chunk_directory` is set correctly
-- Verify the path is `res://terrain_data/raw_height`
-- Check Godot's Output panel (F12) for errors
-
-### Player falls through terrain
-- Make sure the player starts above the terrain
-- Check that GroundCheck RayCast3D is enabled and pointing down
-- Verify terrain chunks have collision shapes
-
-### Download is slow
-Tiles are 50-100MB each. This is normal. Tips:
-- Start with `central` region (1-4 tiles)
-- Use a wired connection
-- Tiles are served from Sweden - international connections may be slower
-
-## Credits
-
-- Terrain data: © Lantmäteriet, Sweden
-- Inspired by: Steep (Ubisoft Annecy)
-
-## Documentation
-
-- `QUICKSTART.md` - 5-minute setup guide
-- `docs/LANTMATERIET_SETUP.md` - Detailed API setup with screenshots
-- `docs/CHEATSHEET.md` - Command reference
+Game code: MIT. Terrain data: © Lantmäteriet, redistributed under their open data terms (see [Lantmäteriet open data](https://www.lantmateriet.se/en/geodata/geodata-products/open-data/)).
