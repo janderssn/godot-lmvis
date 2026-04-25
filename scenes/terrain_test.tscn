@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3 uid="uid://terrain_test"]
+
+[ext_resource type="Script" path="res://src/terrain_test.gd" id="1_test"]
+
+[node name="TerrainTest" type="Node3D"]
+script = ExtResource("1_test")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.5, -0.707107, 0.5, 0, 0.707107, 0.707107, -0.866025, -0.5, 0.5, 0, 100, 0)
+light_color = Color(1, 1, 1, 1)
+light_energy = 1.5
+shadow_enabled = true
+
+[node name="Camera3D" type="Camera3D" parent="."]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]

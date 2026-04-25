@@ -1,0 +1,54 @@
+# Godot 4
+.godot/
+.import/
+export.cfg
+export_presets.cfg
+*.translation
+
+# Mono
+.mono/
+data_*/
+mono_crash.*.json
+
+# Builds
+build/
+builds/
+
+# IDE / editors
+.vscode/
+.idea/
+*.csproj
+*.sln
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv
+pip-log.txt
+
+# Terrain data — large generated binaries (regenerate via scripts/)
+terrain_data/raw/
+terrain_data/processed/
+terrain_data/processed_fixed/
+terrain_data/raw_height/**/*.raw
+terrain_data/raw_height/**/*.r16
+terrain_data/raw_height/**/*.png
+terrain_data/raw_height/**/*.tif
+terrain_data/raw_height/**/*.tiff
+
+# Keep manifests so the data layout is documented
+!terrain_data/raw_height/**/*.json
+
+# Local / personal
+.codex
+screenshots/

@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=3 uid="uid://visible"]
+
+[ext_resource type="Script" path="res://src/terrain_visible.gd" id="1_vis"]
+
+[node name="VisibleTest" type="Node3D"]
+script = ExtResource("1_vis")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+direction = Vector3(-0.5, -1, -0.5)
+light_energy = 2.0
+
+[node name="Camera3D" type="Camera3D" parent="."]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]

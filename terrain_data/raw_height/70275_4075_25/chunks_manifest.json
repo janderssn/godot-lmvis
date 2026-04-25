@@ -1,0 +1,610 @@
+{
+  "original_file": "terrain_data/raw/70275_4075_25.tif",
+  "chunk_size": 256,
+  "overlap": 1,
+  "total_chunks": 100,
+  "world_offset_x": 12500,
+  "world_offset_z": 2500,
+  "chunks": [
+    {
+      "file": "chunk_0000_0000.raw",
+      "world_x": 12500,
+      "world_z": 2500,
+      "size": 256
+    },
+    {
+      "file": "chunk_0000_0255.raw",
+      "world_x": 12755,
+      "world_z": 2500,
+      "size": 256
+    },
+    {
+      "file": "chunk_0000_0510.raw",
+      "world_x": 13010,
+      "world_z": 2500,
+      "size": 256
+    },
+    {
+      "file": "chunk_0000_0765.raw",
+      "world_x": 13265,
+      "world_z": 2500,
+      "size": 256
+    },
+    {
+      "file": "chunk_0000_1020.raw",
+      "world_x": 13520,
+      "world_z": 2500,
+      "size": 256
+    },
+    {
+      "file": "chunk_0000_1275.raw",
+      "world_x": 13775,
+      "world_z": 2500,
+      "size": 256
+    },
+    {
+      "file": "chunk_0000_1530.raw",
+      "world_x": 14030,
+      "world_z": 2500,
+      "size": 256
+    },
+    {
+      "file": "chunk_0000_1785.raw",
+      "world_x": 14285,
+      "world_z": 2500,
+      "size": 256
+    },
+    {
+      "file": "chunk_0000_2040.raw",
+      "world_x": 14540,
+      "world_z": 2500,
+      "size": 256
+    },
+    {
+      "file": "chunk_0000_2295.raw",
+      "world_x": 14795,
+      "world_z": 2500,
+      "size": 256
+    },
+    {
+      "file": "chunk_0255_0000.raw",
+      "world_x": 12500,
+      "world_z": 2755,
+      "size": 256
+    },
+    {
+      "file": "chunk_0255_0255.raw",
+      "world_x": 12755,
+      "world_z": 2755,
+      "size": 256
+    },
+    {
+      "file": "chunk_0255_0510.raw",
+      "world_x": 13010,
+      "world_z": 2755,
+      "size": 256
+    },
+    {
+      "file": "chunk_0255_0765.raw",
+      "world_x": 13265,
+      "world_z": 2755,
+      "size": 256
+    },
+    {
+      "file": "chunk_0255_1020.raw",
+      "world_x": 13520,
+      "world_z": 2755,
+      "size": 256
+    },
+    {
+      "file": "chunk_0255_1275.raw",
+      "world_x": 13775,
+      "world_z": 2755,
+      "size": 256
+    },
+    {
+      "file": "chunk_0255_1530.raw",
+      "world_x": 14030,
+      "world_z": 2755,
+      "size": 256
+    },
+    {
+      "file": "chunk_0255_1785.raw",
+      "world_x": 14285,
+      "world_z": 2755,
+      "size": 256
+    },
+    {
+      "file": "chunk_0255_2040.raw",
+      "world_x": 14540,
+      "world_z": 2755,
+      "size": 256
+    },
+    {
+      "file": "chunk_0255_2295.raw",
+      "world_x": 14795,
+      "world_z": 2755,
+      "size": 256
+    },
+    {
+      "file": "chunk_0510_0000.raw",
+      "world_x": 12500,
+      "world_z": 3010,
+      "size": 256
+    },
+    {
+      "file": "chunk_0510_0255.raw",
+      "world_x": 12755,
+      "world_z": 3010,
+      "size": 256
+    },
+    {
+      "file": "chunk_0510_0510.raw",
+      "world_x": 13010,
+      "world_z": 3010,
+      "size": 256
+    },
+    {
+      "file": "chunk_0510_0765.raw",
+      "world_x": 13265,
+      "world_z": 3010,
+      "size": 256
+    },
+    {
+      "file": "chunk_0510_1020.raw",
+      "world_x": 13520,
+      "world_z": 3010,
+      "size": 256
+    },
+    {
+      "file": "chunk_0510_1275.raw",
+      "world_x": 13775,
+      "world_z": 3010,
+      "size": 256
+    },
+    {
+      "file": "chunk_0510_1530.raw",
+      "world_x": 14030,
+      "world_z": 3010,
+      "size": 256
+    },
+    {
+      "file": "chunk_0510_1785.raw",
+      "world_x": 14285,
+      "world_z": 3010,
+      "size": 256
+    },
+    {
+      "file": "chunk_0510_2040.raw",
+      "world_x": 14540,
+      "world_z": 3010,
+      "size": 256
+    },
+    {
+      "file": "chunk_0510_2295.raw",
+      "world_x": 14795,
+      "world_z": 3010,
+      "size": 256
+    },
+    {
+      "file": "chunk_0765_0000.raw",
+      "world_x": 12500,
+      "world_z": 3265,
+      "size": 256
+    },
+    {
+      "file": "chunk_0765_0255.raw",
+      "world_x": 12755,
+      "world_z": 3265,
+      "size": 256
+    },
+    {
+      "file": "chunk_0765_0510.raw",
+      "world_x": 13010,
+      "world_z": 3265,
+      "size": 256
+    },
+    {
+      "file": "chunk_0765_0765.raw",
+      "world_x": 13265,
+      "world_z": 3265,
+      "size": 256
+    },
+    {
+      "file": "chunk_0765_1020.raw",
+      "world_x": 13520,
+      "world_z": 3265,
+      "size": 256
+    },
+    {
+      "file": "chunk_0765_1275.raw",
+      "world_x": 13775,
+      "world_z": 3265,
+      "size": 256
+    },
+    {
+      "file": "chunk_0765_1530.raw",
+      "world_x": 14030,
+      "world_z": 3265,
+      "size": 256
+    },
+    {
+      "file": "chunk_0765_1785.raw",
+      "world_x": 14285,
+      "world_z": 3265,
+      "size": 256
+    },
+    {
+      "file": "chunk_0765_2040.raw",
+      "world_x": 14540,
+      "world_z": 3265,
+      "size": 256
+    },
+    {
+      "file": "chunk_0765_2295.raw",
+      "world_x": 14795,
+      "world_z": 3265,
+      "size": 256
+    },
+    {
+      "file": "chunk_1020_0000.raw",
+      "world_x": 12500,
+      "world_z": 3520,
+      "size": 256
+    },
+    {
+      "file": "chunk_1020_0255.raw",
+      "world_x": 12755,
+      "world_z": 3520,
+      "size": 256
+    },
+    {
+      "file": "chunk_1020_0510.raw",
+      "world_x": 13010,
+      "world_z": 3520,
+      "size": 256
+    },
+    {
+      "file": "chunk_1020_0765.raw",
+      "world_x": 13265,
+      "world_z": 3520,
+      "size": 256
+    },
+    {
+      "file": "chunk_1020_1020.raw",
+      "world_x": 13520,
+      "world_z": 3520,
+      "size": 256
+    },
+    {
+      "file": "chunk_1020_1275.raw",
+      "world_x": 13775,
+      "world_z": 3520,
+      "size": 256
+    },
+    {
+      "file": "chunk_1020_1530.raw",
+      "world_x": 14030,
+      "world_z": 3520,
+      "size": 256
+    },
+    {
+      "file": "chunk_1020_1785.raw",
+      "world_x": 14285,
+      "world_z": 3520,
+      "size": 256
+    },
+    {
+      "file": "chunk_1020_2040.raw",
+      "world_x": 14540,
+      "world_z": 3520,
+      "size": 256
+    },
+    {
+      "file": "chunk_1020_2295.raw",
+      "world_x": 14795,
+      "world_z": 3520,
+      "size": 256
+    },
+    {
+      "file": "chunk_1275_0000.raw",
+      "world_x": 12500,
+      "world_z": 3775,
+      "size": 256
+    },
+    {
+      "file": "chunk_1275_0255.raw",
+      "world_x": 12755,
+      "world_z": 3775,
+      "size": 256
+    },
+    {
+      "file": "chunk_1275_0510.raw",
+      "world_x": 13010,
+      "world_z": 3775,
+      "size": 256
+    },
+    {
+      "file": "chunk_1275_0765.raw",
+      "world_x": 13265,
+      "world_z": 3775,
+      "size": 256
+    },
+    {
+      "file": "chunk_1275_1020.raw",
+      "world_x": 13520,
+      "world_z": 3775,
+      "size": 256
+    },
+    {
+      "file": "chunk_1275_1275.raw",
+      "world_x": 13775,
+      "world_z": 3775,
+      "size": 256
+    },
+    {
+      "file": "chunk_1275_1530.raw",
+      "world_x": 14030,
+      "world_z": 3775,
+      "size": 256
+    },
+    {
+      "file": "chunk_1275_1785.raw",
+      "world_x": 14285,
+      "world_z": 3775,
+      "size": 256
+    },
+    {
+      "file": "chunk_1275_2040.raw",
+      "world_x": 14540,
+      "world_z": 3775,
+      "size": 256
+    },
+    {
+      "file": "chunk_1275_2295.raw",
+      "world_x": 14795,
+      "world_z": 3775,
+      "size": 256
+    },
+    {
+      "file": "chunk_1530_0000.raw",
+      "world_x": 12500,
+      "world_z": 4030,
+      "size": 256
+    },
+    {
+      "file": "chunk_1530_0255.raw",
+      "world_x": 12755,
+      "world_z": 4030,
+      "size": 256
+    },
+    {
+      "file": "chunk_1530_0510.raw",
+      "world_x": 13010,
+      "world_z": 4030,
+      "size": 256
+    },
+    {
+      "file": "chunk_1530_0765.raw",
+      "world_x": 13265,
+      "world_z": 4030,
+      "size": 256
+    },
+    {
+      "file": "chunk_1530_1020.raw",
+      "world_x": 13520,
+      "world_z": 4030,
+      "size": 256
+    },
+    {
+      "file": "chunk_1530_1275.raw",
+      "world_x": 13775,
+      "world_z": 4030,
+      "size": 256
+    },
+    {
+      "file": "chunk_1530_1530.raw",
+      "world_x": 14030,
+      "world_z": 4030,
+      "size": 256
+    },
+    {
+      "file": "chunk_1530_1785.raw",
+      "world_x": 14285,
+      "world_z": 4030,
+      "size": 256
+    },
+    {
+      "file": "chunk_1530_2040.raw",
+      "world_x": 14540,
+      "world_z": 4030,
+      "size": 256
+    },
+    {
+      "file": "chunk_1530_2295.raw",
+      "world_x": 14795,
+      "world_z": 4030,
+      "size": 256
+    },
+    {
+      "file": "chunk_1785_0000.raw",
+      "world_x": 12500,
+      "world_z": 4285,
+      "size": 256
+    },
+    {
+      "file": "chunk_1785_0255.raw",
+      "world_x": 12755,
+      "world_z": 4285,
+      "size": 256
+    },
+    {
+      "file": "chunk_1785_0510.raw",
+      "world_x": 13010,
+      "world_z": 4285,
+      "size": 256
+    },
+    {
+      "file": "chunk_1785_0765.raw",
+      "world_x": 13265,
+      "world_z": 4285,
+      "size": 256
+    },
+    {
+      "file": "chunk_1785_1020.raw",
+      "world_x": 13520,
+      "world_z": 4285,
+      "size": 256
+    },
+    {
+      "file": "chunk_1785_1275.raw",
+      "world_x": 13775,
+      "world_z": 4285,
+      "size": 256
+    },
+    {
+      "file": "chunk_1785_1530.raw",
+      "world_x": 14030,
+      "world_z": 4285,
+      "size": 256
+    },
+    {
+      "file": "chunk_1785_1785.raw",
+      "world_x": 14285,
+      "world_z": 4285,
+      "size": 256
+    },
+    {
+      "file": "chunk_1785_2040.raw",
+      "world_x": 14540,
+      "world_z": 4285,
+      "size": 256
+    },
+    {
+      "file": "chunk_1785_2295.raw",
+      "world_x": 14795,
+      "world_z": 4285,
+      "size": 256
+    },
+    {
+      "file": "chunk_2040_0000.raw",
+      "world_x": 12500,
+      "world_z": 4540,
+      "size": 256
+    },
+    {
+      "file": "chunk_2040_0255.raw",
+      "world_x": 12755,
+      "world_z": 4540,
+      "size": 256
+    },
+    {
+      "file": "chunk_2040_0510.raw",
+      "world_x": 13010,
+      "world_z": 4540,
+      "size": 256
+    },
+    {
+      "file": "chunk_2040_0765.raw",
+      "world_x": 13265,
+      "world_z": 4540,
+      "size": 256
+    },
+    {
+      "file": "chunk_2040_1020.raw",
+      "world_x": 13520,
+      "world_z": 4540,
+      "size": 256
+    },
+    {
+      "file": "chunk_2040_1275.raw",
+      "world_x": 13775,
+      "world_z": 4540,
+      "size": 256
+    },
+    {
+      "file": "chunk_2040_1530.raw",
+      "world_x": 14030,
+      "world_z": 4540,
+      "size": 256
+    },
+    {
+      "file": "chunk_2040_1785.raw",
+      "world_x": 14285,
+      "world_z": 4540,
+      "size": 256
+    },
+    {
+      "file": "chunk_2040_2040.raw",
+      "world_x": 14540,
+      "world_z": 4540,
+      "size": 256
+    },
+    {
+      "file": "chunk_2040_2295.raw",
+      "world_x": 14795,
+      "world_z": 4540,
+      "size": 256
+    },
+    {
+      "file": "chunk_2295_0000.raw",
+      "world_x": 12500,
+      "world_z": 4795,
+      "size": 256
+    },
+    {
+      "file": "chunk_2295_0255.raw",
+      "world_x": 12755,
+      "world_z": 4795,
+      "size": 256
+    },
+    {
+      "file": "chunk_2295_0510.raw",
+      "world_x": 13010,
+      "world_z": 4795,
+      "size": 256
+    },
+    {
+      "file": "chunk_2295_0765.raw",
+      "world_x": 13265,
+      "world_z": 4795,
+      "size": 256
+    },
+    {
+      "file": "chunk_2295_1020.raw",
+      "world_x": 13520,
+      "world_z": 4795,
+      "size": 256
+    },
+    {
+      "file": "chunk_2295_1275.raw",
+      "world_x": 13775,
+      "world_z": 4795,
+      "size": 256
+    },
+    {
+      "file": "chunk_2295_1530.raw",
+      "world_x": 14030,
+      "world_z": 4795,
+      "size": 256
+    },
+    {
+      "file": "chunk_2295_1785.raw",
+      "world_x": 14285,
+      "world_z": 4795,
+      "size": 256
+    },
+    {
+      "file": "chunk_2295_2040.raw",
+      "world_x": 14540,
+      "world_z": 4795,
+      "size": 256
+    },
+    {
+      "file": "chunk_2295_2295.raw",
+      "world_x": 14795,
+      "world_z": 4795,
+      "size": 256
+    }
+  ]
+}
