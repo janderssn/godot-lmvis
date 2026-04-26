@@ -3,13 +3,11 @@ extends Node3D
 const ARESKUTAN_TOPPSTUGAN_SWEREF := Vector2(404867.81423292926, 7035230.670129072)
 const BENCH_DURATION_SEC := 15.0
 const BENCH_WARMUP_SEC := 2.0
-const BENCH_PATH_RADIUS := 3000.0
 
 @onready var terrain_loader = $TerrainLoader
 @onready var camera = $Camera
 
 var _perf_label: Label
-var _ascot_origin: Vector3 = Vector3.ZERO
 
 var _bench_active: bool = false
 var _bench_warmup_done: bool = false
@@ -24,7 +22,6 @@ func _ready():
 	)
 	if focus == Vector3.ZERO:
 		focus = terrain_loader.get_default_focus_position()
-	_ascot_origin = focus
 
 	terrain_loader.start_streaming(focus)
 
@@ -41,7 +38,6 @@ func _ready():
 		print("BENCH godot-lmvis: warming up %.1fs, then sampling %.1fs" % [BENCH_WARMUP_SEC, BENCH_DURATION_SEC])
 		_bench_active = true
 		_bench_start_msec = Time.get_ticks_msec()
-		camera.auto_orbit = false
 		return
 
 	print("Åre terrain foundation scene")
@@ -107,20 +103,14 @@ func _update_perf_overlay():
 # --- benchmark mode ----------------------------------------------------------
 
 func _drive_bench(delta_s: float):
+	# The bench just lets the app do its normal thing — auto-orbit around
+	# the Toppstugan focus set in _ready — and samples frame times. No
+	# extra camera scripting, so what gets measured is exactly what the
+	# user experiences when launching the scene.
 	var elapsed = (Time.get_ticks_msec() - _bench_start_msec) / 1000.0
-	var t_path = clamp(elapsed - BENCH_WARMUP_SEC, 0.0, BENCH_DURATION_SEC)
-
-	# Move the focus on a deterministic loop around Åreskutan to exercise
-	# streaming + LOD transitions across the full LOD pyramid.
-	var phase = (t_path / BENCH_DURATION_SEC) * TAU * 2.0
-	var radius = BENCH_PATH_RADIUS * (0.5 + 0.5 * sin(t_path / BENCH_DURATION_SEC * PI))
-	var new_focus = _ascot_origin + Vector3(cos(phase) * radius, 0.0, sin(phase) * radius)
-	new_focus.y = terrain_loader.get_height_at_position(new_focus)
-	camera.set_orbit_center(new_focus)
-	camera.set_orbit_angle(phase)
 
 	if elapsed < BENCH_WARMUP_SEC:
-		return  # warmup: drive camera but don't sample
+		return
 
 	if not _bench_warmup_done:
 		_bench_warmup_done = true
