@@ -1,11 +1,11 @@
 #!/bin/bash
-# Quick setup script for Åre Steep
+# Quick setup script for godot-lmvis
 # Run this from the project root directory
 
 cd "$(dirname "$0")"
 
 echo "========================================"
-echo "  Åre Steep - Environment Setup"
+echo "  godot-lmvis - Environment Setup"
 echo "========================================"
 echo ""
 

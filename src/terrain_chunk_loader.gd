@@ -3,12 +3,19 @@ extends Node3D
 signal terrain_ready
 
 @export var height_directory: String = "res://terrain_data/raw_height"
+@export var ortho_directory: String = ""
+@export var super_near_load_radius: int = 2
 @export var load_radius: int = 6
-@export var unload_radius: int = 8
+@export var far_load_radius: int = 24
+@export var horizon_load_radius: int = 60
+@export var unload_radius: int = 64
 @export var chunk_size: int = 256
 @export var overlap: int = 1
 @export var height_scale: float = 1.0
+@export var super_near_visual_lod_step: int = 2
 @export var visual_lod_step: int = 4
+@export var far_visual_lod_step: int = 16
+@export var horizon_visual_lod_step: int = 64
 @export var collision_lod_step: int = 8
 @export var max_data_loads_per_frame: int = 16
 @export var max_mesh_gens_per_frame: int = 4
@@ -25,12 +32,33 @@ var streaming_enabled: bool = false
 var has_emitted_ready: bool = false
 var stream_focus_position: Vector3 = Vector3.ZERO
 
+var _cached_desired_meshes: Dictionary = {}
+var _cached_desired_data: Dictionary = {}
+var _cached_focus_2d: Vector2 = Vector2(INF, INF)
+var _desired_dirty: bool = true
+
+var _horizon_origins: Dictionary = {}
+var _horizon_chunk_arrays: Dictionary = {}
+var _horizon_mesh_instance: MeshInstance3D = null
+var _horizon_mesh_dirty: bool = false
+var _horizon_thread: Thread = null
+
+@export var max_horizon_builds_per_frame: int = 32
+
+const TerrainChunk = preload("res://src/terrain_chunk.gd")
+
 
 func _ready():
 	chunk_step = chunk_size - overlap
 	_load_dataset_manifest()
 	_load_all_manifests()
 	_derive_default_focus()
+
+
+func _exit_tree():
+	if _horizon_thread and _horizon_thread.is_started():
+		_horizon_thread.wait_to_finish()
+		_horizon_thread = null
 
 
 func _process(_delta):
@@ -201,51 +229,21 @@ func _derive_default_focus():
 
 func _stream_around_position(pos: Vector3, bulk: bool):
 	var focus_2d = Vector2(pos.x, pos.z)
-	var load_distance = float(load_radius * chunk_step + chunk_size)
 	var unload_distance = float(unload_radius * chunk_step + chunk_size)
-	var load_dist_sq = load_distance * load_distance
 	var unload_dist_sq = unload_distance * unload_distance
-	var desired_meshes: Dictionary = {}
-	var desired_data: Dictionary = {}
+	var recompute_threshold_sq = float(chunk_size) * float(chunk_size) * 0.25
 
-	var focus_cx = _cell_coord(int(round(pos.x)))
-	var focus_cz = _cell_coord(int(round(pos.z)))
-	var cell_radius = int(ceil(load_distance / float(chunk_size))) + 1
-	for cz in range(focus_cz - cell_radius, focus_cz + cell_radius + 1):
-		for cx in range(focus_cx - cell_radius, focus_cx + cell_radius + 1):
-			var cell = Vector2i(cx, cz)
-			if not spatial_index.has(cell):
-				continue
-			for origin in spatial_index[cell]:
-				if desired_meshes.has(origin):
-					continue
-				var center = Vector2(
-					float(origin.x) + chunk_size * 0.5,
-					float(origin.y) + chunk_size * 0.5
-				)
-				if (center - focus_2d).length_squared() <= load_dist_sq:
-					desired_meshes[origin] = true
-					desired_data[origin] = true
+	if (
+		bulk
+		or _desired_dirty
+		or (focus_2d - _cached_focus_2d).length_squared() > recompute_threshold_sq
+	):
+		_recompute_desired(focus_2d)
+		_cached_focus_2d = focus_2d
+		_desired_dirty = false
 
-	for desired in desired_meshes.keys():
-		var origin: Vector2i = desired
-		var min_cx = _cell_coord(origin.x - chunk_size)
-		var min_cz = _cell_coord(origin.y - chunk_size)
-		var max_cx = _cell_coord(origin.x + chunk_size * 2 - 1)
-		var max_cz = _cell_coord(origin.y + chunk_size * 2 - 1)
-		for cz in range(min_cz, max_cz + 1):
-			for cx in range(min_cx, max_cx + 1):
-				var cell = Vector2i(cx, cz)
-				if not spatial_index.has(cell):
-					continue
-				for other_origin in spatial_index[cell]:
-					if other_origin == origin or desired_data.has(other_origin):
-						continue
-					if (
-						abs(other_origin.x - origin.x) <= chunk_size
-						and abs(other_origin.y - origin.y) <= chunk_size
-					):
-						desired_data[other_origin] = true
+	var desired_meshes = _cached_desired_meshes
+	var desired_data = _cached_desired_data
 
 	var data_budget = 999999 if bulk else max_data_loads_per_frame
 	for origin in desired_data:
@@ -262,12 +260,70 @@ func _stream_around_position(pos: Vector3, bulk: bool):
 		if not loaded_chunks.has(origin):
 			continue
 		var chunk = loaded_chunks[origin]
-		if chunk.mesh_generated:
+		var params = desired_meshes[origin]
+		var step: int = params["lod"]
+		var collision: bool = params["collision"]
+		var horizon: bool = params["horizon"]
+
+		if horizon:
+			if chunk.mesh_generated:
+				chunk.clear_mesh()
+				_horizon_mesh_dirty = true
+			if not _horizon_origins.has(origin):
+				_horizon_origins[origin] = true
+				_horizon_mesh_dirty = true
+			continue
+
+		if _horizon_origins.has(origin):
+			_horizon_origins.erase(origin)
+			_horizon_mesh_dirty = true
+
+		if (
+			chunk.mesh_generated
+			and chunk.mesh_lod_step == step
+			and chunk.mesh_has_collision == collision
+			and not chunk.mesh_is_horizon
+		):
 			continue
 		if not _neighbors_data_loaded(origin):
 			continue
-		chunk.generate()
+		chunk.generate(step, collision, false)
 		mesh_budget -= 1
+
+	for origin in _horizon_origins.keys():
+		if not desired_meshes.has(origin) or not desired_meshes[origin]["horizon"]:
+			_horizon_origins.erase(origin)
+			_horizon_mesh_dirty = true
+
+	for origin in _horizon_chunk_arrays.keys():
+		if not _horizon_origins.has(origin) or not loaded_chunks.has(origin):
+			_horizon_chunk_arrays.erase(origin)
+			_horizon_mesh_dirty = true
+
+	var build_budget = 999999 if bulk else max_horizon_builds_per_frame
+	for origin in _horizon_origins.keys():
+		if build_budget <= 0:
+			break
+		if _horizon_chunk_arrays.has(origin):
+			continue
+		if not loaded_chunks.has(origin):
+			continue
+		var chunk = loaded_chunks[origin]
+		var arrays = chunk.build_world_triangles(horizon_visual_lod_step)
+		if arrays.is_empty():
+			continue
+		_horizon_chunk_arrays[origin] = arrays
+		_horizon_mesh_dirty = true
+		build_budget -= 1
+
+	if _horizon_thread and not _horizon_thread.is_alive():
+		var result: Array = _horizon_thread.wait_to_finish()
+		_horizon_thread = null
+		_apply_horizon_rebuild(result)
+
+	if _horizon_mesh_dirty and _horizon_thread == null:
+		_horizon_mesh_dirty = false
+		_kick_horizon_rebuild(bulk)
 
 	var stale_origins: Array[Vector2i] = []
 	for origin in loaded_chunks.keys():
@@ -280,6 +336,87 @@ func _stream_around_position(pos: Vector3, bulk: bool):
 
 	for origin in stale_origins:
 		_unload_chunk(origin)
+
+
+func _recompute_desired(focus_2d: Vector2):
+	var super_near_distance = float(super_near_load_radius * chunk_step + chunk_size)
+	var near_distance = float(load_radius * chunk_step + chunk_size)
+	var far_distance = float(far_load_radius * chunk_step + chunk_size)
+	var horizon_distance = float(horizon_load_radius * chunk_step + chunk_size)
+	var super_near_dist_sq = super_near_distance * super_near_distance
+	var near_dist_sq = near_distance * near_distance
+	var far_dist_sq = far_distance * far_distance
+	var horizon_dist_sq = horizon_distance * horizon_distance
+
+	_cached_desired_meshes.clear()
+	_cached_desired_data.clear()
+
+	var focus_cx = _cell_coord(int(round(focus_2d.x)))
+	var focus_cz = _cell_coord(int(round(focus_2d.y)))
+	var cell_radius = int(ceil(horizon_distance / float(chunk_size))) + 1
+	for cz in range(focus_cz - cell_radius, focus_cz + cell_radius + 1):
+		for cx in range(focus_cx - cell_radius, focus_cx + cell_radius + 1):
+			var cell = Vector2i(cx, cz)
+			if not spatial_index.has(cell):
+				continue
+			for origin in spatial_index[cell]:
+				if _cached_desired_meshes.has(origin):
+					continue
+				var center = Vector2(
+					float(origin.x) + chunk_size * 0.5,
+					float(origin.y) + chunk_size * 0.5
+				)
+				var d_sq = (center - focus_2d).length_squared()
+				if d_sq <= super_near_dist_sq:
+					_cached_desired_meshes[origin] = {
+						"lod": super_near_visual_lod_step,
+						"collision": true,
+						"horizon": false,
+					}
+					_cached_desired_data[origin] = true
+				elif d_sq <= near_dist_sq:
+					_cached_desired_meshes[origin] = {
+						"lod": visual_lod_step,
+						"collision": true,
+						"horizon": false,
+					}
+					_cached_desired_data[origin] = true
+				elif d_sq <= far_dist_sq:
+					_cached_desired_meshes[origin] = {
+						"lod": far_visual_lod_step,
+						"collision": false,
+						"horizon": false,
+					}
+					_cached_desired_data[origin] = true
+				elif d_sq <= horizon_dist_sq:
+					_cached_desired_meshes[origin] = {
+						"lod": horizon_visual_lod_step,
+						"collision": false,
+						"horizon": true,
+					}
+					_cached_desired_data[origin] = true
+
+	for desired in _cached_desired_meshes.keys():
+		if _cached_desired_meshes[desired]["horizon"]:
+			continue
+		var origin: Vector2i = desired
+		var min_cx = _cell_coord(origin.x - chunk_size)
+		var min_cz = _cell_coord(origin.y - chunk_size)
+		var max_cx = _cell_coord(origin.x + chunk_size * 2 - 1)
+		var max_cz = _cell_coord(origin.y + chunk_size * 2 - 1)
+		for cz in range(min_cz, max_cz + 1):
+			for cx in range(min_cx, max_cx + 1):
+				var cell = Vector2i(cx, cz)
+				if not spatial_index.has(cell):
+					continue
+				for other_origin in spatial_index[cell]:
+					if other_origin == origin or _cached_desired_data.has(other_origin):
+						continue
+					if (
+						abs(other_origin.x - origin.x) <= chunk_size
+						and abs(other_origin.y - origin.y) <= chunk_size
+					):
+						_cached_desired_data[other_origin] = true
 
 
 func _neighbors_data_loaded(origin: Vector2i) -> bool:
@@ -329,7 +466,8 @@ func _load_chunk_data(origin: Vector2i):
 		chunk_path,
 		height_scale,
 		visual_lod_step,
-		collision_lod_step
+		collision_lod_step,
+		_ortho_path_for(chunk_data)
 	)
 	chunk.position = Vector3(origin.x, 0.0, origin.y)
 	add_child(chunk)
@@ -374,6 +512,65 @@ func _unload_chunk(origin: Vector2i):
 	var chunk = loaded_chunks[origin]
 	loaded_chunks.erase(origin)
 	chunk.queue_free()
+	if _horizon_origins.has(origin):
+		_horizon_origins.erase(origin)
+		_horizon_mesh_dirty = true
+
+
+func _kick_horizon_rebuild(bulk: bool):
+	var snapshot = _horizon_chunk_arrays.values().duplicate()
+	if bulk:
+		var result = _concat_horizon_arrays(snapshot)
+		_apply_horizon_rebuild(result)
+		return
+	_horizon_thread = Thread.new()
+	_horizon_thread.start(_concat_horizon_arrays.bind(snapshot))
+
+
+static func _concat_horizon_arrays(snapshot: Array) -> Array:
+	var all_verts = PackedVector3Array()
+	var all_normals = PackedVector3Array()
+	for arrays in snapshot:
+		all_verts.append_array(arrays[0])
+		all_normals.append_array(arrays[1])
+	return [all_verts, all_normals]
+
+
+func _apply_horizon_rebuild(result: Array):
+	var all_verts: PackedVector3Array = result[0]
+	var all_normals: PackedVector3Array = result[1]
+
+	if all_verts.is_empty():
+		if _horizon_mesh_instance:
+			_horizon_mesh_instance.mesh = null
+		return
+
+	var merged: Array = []
+	merged.resize(Mesh.ARRAY_MAX)
+	merged[Mesh.ARRAY_VERTEX] = all_verts
+	merged[Mesh.ARRAY_NORMAL] = all_normals
+
+	var mesh = ArrayMesh.new()
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, merged)
+	mesh.surface_set_material(0, TerrainChunk.get_shared_material())
+
+	if not _horizon_mesh_instance:
+		_horizon_mesh_instance = MeshInstance3D.new()
+		_horizon_mesh_instance.name = "HorizonMesh"
+		_horizon_mesh_instance.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		add_child(_horizon_mesh_instance)
+
+	_horizon_mesh_instance.mesh = mesh
+
+
+func _ortho_path_for(chunk_data: Dictionary) -> String:
+	if ortho_directory.is_empty():
+		return ""
+	var stem: String = String(chunk_data["file"]).get_basename()
+	var candidate := ortho_directory.path_join(chunk_data["tile_folder"]).path_join(stem + ".png")
+	if not FileAccess.file_exists(candidate):
+		return ""
+	return candidate
 
 
 func _ensure_chunk_loaded(pos: Vector3):

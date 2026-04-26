@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Setup script for Åre Steep game development environment.
+Setup script for godot-lmvis game development environment.
 Checks dependencies, API access, and guides through initial setup.
 """
 
@@ -172,7 +172,7 @@ def test_api_connection():
         return False
 
 def main():
-    print_header("Åre Steep - Development Environment Setup")
+    print_header("godot-lmvis - Development Environment Setup")
     
     print("\nThis script checks your development environment.")
     print("Follow the steps below to get everything working.\n")

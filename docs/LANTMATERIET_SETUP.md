@@ -40,6 +40,18 @@ Lantmäteriet's **Markhöjdmodell Nedladdning** provides 1-meter resolution heig
 
 **Note**: Access is typically granted within minutes (automated for most users).
 
+### Optional: Ortofoto (aerial color imagery)
+
+For photo-textured terrain there are two routes (see README "Optional: photo-textured terrain"):
+
+1. **XYZ map tiles** via `scripts/maptiles_to_chunks.py` — no Lantmäteriet auth needed at all, default ESRI World Imagery, just an attribution requirement.
+2. **Lantmäteriet Ortofoto** — same Geotorget account, separate product order. Order **Ortofoto Nedladdning** from the Produkter page, same HTTP Basic Auth as the heightmap, different STAC endpoint:
+
+   - Heightmap: `https://api.lantmateriet.se/stac-hojd/v1`
+   - Ortofoto:  `https://api.lantmateriet.se/stac-bild/v1`
+
+   `scripts/download_ortofoto.py` + `scripts/convert_ortofoto.py` reuse the same `LANTMATERIET_USERNAME` / `LANTMATERIET_PASSWORD` you set up below. Listing collections doesn't need extra access; downloading the actual imagery returns 403 until *Ortofoto Nedladdning* is ordered and granted.
+
 ## Step 3: Configure Your Environment
 
 The API uses **HTTP Basic Authentication** with your Geotorget username (email) and password.
@@ -63,7 +75,7 @@ source ~/.bashrc  # or ~/.zshrc
 Create a `.env` file in the project root:
 
 ```bash
-cd /home/joel/dev/are-steep-game
+cd /home/joel/dev/godot-lmvis
 cat > .env << 'EOF'
 LANTMATERIET_USERNAME=your_email@example.com
 LANTMATERIET_PASSWORD=your_password
@@ -92,7 +104,7 @@ python download_terrain.py --region are_central \
 Run a dry-run to verify everything works:
 
 ```bash
-cd /home/joel/dev/are-steep-game/scripts
+cd /home/joel/dev/godot-lmvis/scripts
 python download_terrain.py --region are_central --dry-run
 ```
 

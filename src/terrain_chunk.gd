@@ -9,8 +9,16 @@ var visual_lod_step: int = 4
 var collision_lod_step: int = 8
 var chunk_origin: Vector2i = Vector2i.ZERO
 var mesh_generated: bool = false
+var mesh_lod_step: int = 0
+var mesh_has_collision: bool = false
+var mesh_is_horizon: bool = false
+var mesh_instance: MeshInstance3D = null
+var collision_shape: CollisionShape3D = null
 var mesh_last_x: int = 255
 var mesh_last_z: int = 255
+var _local_only_sampling: bool = false
+var ortho_path: String = ""
+var _albedo_texture: Texture2D = null
 
 
 func _init():
@@ -24,13 +32,15 @@ func setup(
 	chunk_path: String,
 	scale: float = 1.0,
 	visual_step: int = 4,
-	collision_step: int = 8
+	collision_step: int = 8,
+	ortho_path_in: String = ""
 ):
 	chunk_origin = Vector2i(origin_x, origin_z)
 	name = "Chunk_%d_%d" % [origin_x, origin_z]
 	height_scale = scale
 	visual_lod_step = max(1, visual_step)
 	collision_lod_step = max(1, collision_step)
+	ortho_path = ortho_path_in
 
 	if chunk_path.ends_with(".raw"):
 		_load_raw(chunk_path)
@@ -80,28 +90,73 @@ func _load_png(png_path: String):
 	_scan_valid_extent()
 
 
-func generate():
-	if heightmap_data.is_empty() or mesh_generated:
+func generate(lod_step: int = 0, with_collision: bool = true, horizon: bool = false):
+	if heightmap_data.is_empty():
 		return
 
-	_generate_visual_mesh()
-	_generate_collision_shape()
+	var step = lod_step if lod_step > 0 else visual_lod_step
+	if (
+		mesh_generated
+		and mesh_lod_step == step
+		and mesh_has_collision == with_collision
+		and mesh_is_horizon == horizon
+	):
+		return
+
+	if mesh_instance:
+		mesh_instance.queue_free()
+		mesh_instance = null
+	if collision_shape:
+		collision_shape.queue_free()
+		collision_shape = null
+
+	_local_only_sampling = horizon
+	_generate_visual_mesh(step, with_collision)
+	if with_collision:
+		_generate_collision_shape()
+	_local_only_sampling = false
+
+	mesh_lod_step = step
+	mesh_has_collision = with_collision
+	mesh_is_horizon = horizon
 	mesh_generated = true
 
 
-func _generate_visual_mesh():
-	var arrays = _build_grid_arrays(visual_lod_step, true)
+func _generate_visual_mesh(step: int, casts_shadow: bool):
+	var arrays = _build_grid_arrays(step, true)
 	if arrays.is_empty():
 		return
 
 	var mesh = ArrayMesh.new()
 	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
-	mesh.surface_set_material(0, _get_terrain_material())
+	mesh.surface_set_material(0, _resolve_material(casts_shadow))
 
-	var mesh_instance = MeshInstance3D.new()
+	mesh_instance = MeshInstance3D.new()
 	mesh_instance.mesh = mesh
-	mesh_instance.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+	mesh_instance.cast_shadow = (
+		GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+		if casts_shadow
+		else GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	)
 	add_child(mesh_instance)
+
+
+func _resolve_material(want_texture: bool) -> ShaderMaterial:
+	if not want_texture or ortho_path.is_empty():
+		return _get_terrain_material()
+
+	if _albedo_texture == null:
+		var img = Image.new()
+		if img.load(ortho_path) == OK:
+			_albedo_texture = ImageTexture.create_from_image(img)
+	if _albedo_texture == null:
+		return _get_terrain_material()
+
+	var per_chunk: ShaderMaterial = _get_terrain_material().duplicate()
+	per_chunk.set_shader_parameter("albedo_tex", _albedo_texture)
+	per_chunk.set_shader_parameter("use_albedo_tex", true)
+	per_chunk.set_shader_parameter("chunk_world_size", float(data_size - 1))
+	return per_chunk
 
 
 func _generate_collision_shape():
@@ -113,12 +168,64 @@ func _generate_collision_shape():
 	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
 	var shape = mesh.create_trimesh_shape()
 	if shape:
-		var collider = CollisionShape3D.new()
-		collider.shape = shape
-		add_child(collider)
+		collision_shape = CollisionShape3D.new()
+		collision_shape.shape = shape
+		add_child(collision_shape)
+
+
+func clear_mesh():
+	if mesh_instance:
+		mesh_instance.queue_free()
+		mesh_instance = null
+	if collision_shape:
+		collision_shape.queue_free()
+		collision_shape = null
+	mesh_generated = false
+	mesh_lod_step = 0
+	mesh_has_collision = false
+	mesh_is_horizon = false
+
+
+func build_world_triangles(step: int) -> Array:
+	if heightmap_data.is_empty():
+		return []
+	_local_only_sampling = true
+	var indexed = _build_grid_arrays(step, true)
+	_local_only_sampling = false
+	if indexed.is_empty():
+		return []
+
+	var verts: PackedVector3Array = indexed[Mesh.ARRAY_VERTEX]
+	var normals: PackedVector3Array = indexed[Mesh.ARRAY_NORMAL]
+	var indices: PackedInt32Array = indexed[Mesh.ARRAY_INDEX]
+
+	var ox = float(chunk_origin.x)
+	var oz = float(chunk_origin.y)
+
+	var n = indices.size()
+	var tri_verts = PackedVector3Array()
+	var tri_normals = PackedVector3Array()
+	tri_verts.resize(n)
+	tri_normals.resize(n)
+
+	for i in n:
+		var idx = indices[i]
+		var v = verts[idx]
+		tri_verts[i] = Vector3(v.x + ox, v.y, v.z + oz)
+		tri_normals[i] = normals[idx]
+
+	return [tri_verts, tri_normals]
+
+
+static func get_shared_material() -> ShaderMaterial:
+	return _build_shared_material()
 
 
 func _get_terrain_material() -> ShaderMaterial:
+	return _build_shared_material()
+
+
+static func _build_shared_material() -> ShaderMaterial:
 	if terrain_material:
 		return terrain_material
 
@@ -138,15 +245,18 @@ uniform float rock_slope_end = 0.65;
 uniform float cliff_slope_start = 0.70;
 uniform float cliff_slope_end = 0.90;
 
-varying float world_height;
-varying float world_up_y;
+uniform sampler2D albedo_tex : source_color, filter_linear_mipmap, repeat_disable;
+uniform bool use_albedo_tex = false;
+uniform float chunk_world_size = 256.0;
+
+varying vec3 v_albedo;
+varying float v_roughness;
+varying float v_ao;
+varying vec2 v_uv;
 
 void vertex() {
-	world_height = (MODEL_MATRIX * vec4(VERTEX, 1.0)).y;
-	world_up_y = normalize((MODEL_MATRIX * vec4(NORMAL, 0.0)).xyz).y;
-}
-
-void fragment() {
+	float world_height = (MODEL_MATRIX * vec4(VERTEX, 1.0)).y;
+	float world_up_y = normalize((MODEL_MATRIX * vec4(NORMAL, 0.0)).xyz).y;
 	float slope = 1.0 - clamp(world_up_y, 0.0, 1.0);
 	float elevation = smoothstep(low_height, high_height, world_height);
 	float rock_mix = smoothstep(rock_slope_start, rock_slope_end, slope);
@@ -154,12 +264,17 @@ void fragment() {
 
 	vec3 ground = mix(grass_color.rgb, tundra_color.rgb, elevation);
 	vec3 base = mix(ground, rock_color.rgb, rock_mix);
-	base = mix(base, cliff_color.rgb, cliff_mix);
+	v_albedo = mix(base, cliff_color.rgb, cliff_mix);
+	v_roughness = mix(0.95, 0.78, rock_mix);
+	v_ao = mix(1.0, 0.85, slope);
+	v_uv = vec2(VERTEX.x, VERTEX.z) / chunk_world_size;
+}
 
-	ALBEDO = base;
-	ROUGHNESS = mix(0.95, 0.78, rock_mix);
+void fragment() {
+	ALBEDO = use_albedo_tex ? texture(albedo_tex, v_uv).rgb : v_albedo;
+	ROUGHNESS = v_roughness;
 	SPECULAR = 0.05;
-	AO = mix(1.0, 0.85, slope);
+	AO = v_ao;
 }
 """
 
@@ -238,6 +353,8 @@ func _vertex_normal(x: int, z: int) -> Vector3:
 
 
 func _sample_world_height(x: int, z: int) -> float:
+	if _local_only_sampling:
+		return _h(x, z)
 	if x >= 0 and x < data_size and z >= 0 and z < data_size:
 		var h = heightmap_data[z * data_size + x]
 		if h != 0.0:
