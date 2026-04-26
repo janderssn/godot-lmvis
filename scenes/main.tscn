@@ -33,7 +33,7 @@ environment = SubResource("env")
 [node name="TerrainLoader" type="Node3D" parent="."]
 script = ExtResource("2")
 height_directory = "res://terrain_data/raw_height"
-ortho_directory = "res://terrain_data/ortho"
+ortho_directory = "res://terrain_data/ortho_eniro"
 super_near_load_radius = 2
 load_radius = 6
 far_load_radius = 24
