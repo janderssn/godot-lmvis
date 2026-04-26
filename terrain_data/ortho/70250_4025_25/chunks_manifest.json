@@ -1,0 +1,509 @@
+{
+  "source_url": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+  "zoom": 16,
+  "chunk_size_samples": 256,
+  "overlap": 1,
+  "texture_size": 256,
+  "chunks": [
+    {
+      "file": "chunk_0000_0000.png",
+      "row": 0,
+      "col": 7500
+    },
+    {
+      "file": "chunk_0000_0255.png",
+      "row": 0,
+      "col": 7755
+    },
+    {
+      "file": "chunk_0000_0510.png",
+      "row": 0,
+      "col": 8010
+    },
+    {
+      "file": "chunk_0000_0765.png",
+      "row": 0,
+      "col": 8265
+    },
+    {
+      "file": "chunk_0000_1020.png",
+      "row": 0,
+      "col": 8520
+    },
+    {
+      "file": "chunk_0000_1275.png",
+      "row": 0,
+      "col": 8775
+    },
+    {
+      "file": "chunk_0000_1530.png",
+      "row": 0,
+      "col": 9030
+    },
+    {
+      "file": "chunk_0000_1785.png",
+      "row": 0,
+      "col": 9285
+    },
+    {
+      "file": "chunk_0000_2040.png",
+      "row": 0,
+      "col": 9540
+    },
+    {
+      "file": "chunk_0000_2295.png",
+      "row": 0,
+      "col": 9795
+    },
+    {
+      "file": "chunk_0255_0000.png",
+      "row": 255,
+      "col": 7500
+    },
+    {
+      "file": "chunk_0255_0255.png",
+      "row": 255,
+      "col": 7755
+    },
+    {
+      "file": "chunk_0255_0510.png",
+      "row": 255,
+      "col": 8010
+    },
+    {
+      "file": "chunk_0255_0765.png",
+      "row": 255,
+      "col": 8265
+    },
+    {
+      "file": "chunk_0255_1020.png",
+      "row": 255,
+      "col": 8520
+    },
+    {
+      "file": "chunk_0255_1275.png",
+      "row": 255,
+      "col": 8775
+    },
+    {
+      "file": "chunk_0255_1530.png",
+      "row": 255,
+      "col": 9030
+    },
+    {
+      "file": "chunk_0255_1785.png",
+      "row": 255,
+      "col": 9285
+    },
+    {
+      "file": "chunk_0255_2040.png",
+      "row": 255,
+      "col": 9540
+    },
+    {
+      "file": "chunk_0255_2295.png",
+      "row": 255,
+      "col": 9795
+    },
+    {
+      "file": "chunk_0510_0000.png",
+      "row": 510,
+      "col": 7500
+    },
+    {
+      "file": "chunk_0510_0255.png",
+      "row": 510,
+      "col": 7755
+    },
+    {
+      "file": "chunk_0510_0510.png",
+      "row": 510,
+      "col": 8010
+    },
+    {
+      "file": "chunk_0510_0765.png",
+      "row": 510,
+      "col": 8265
+    },
+    {
+      "file": "chunk_0510_1020.png",
+      "row": 510,
+      "col": 8520
+    },
+    {
+      "file": "chunk_0510_1275.png",
+      "row": 510,
+      "col": 8775
+    },
+    {
+      "file": "chunk_0510_1530.png",
+      "row": 510,
+      "col": 9030
+    },
+    {
+      "file": "chunk_0510_1785.png",
+      "row": 510,
+      "col": 9285
+    },
+    {
+      "file": "chunk_0510_2040.png",
+      "row": 510,
+      "col": 9540
+    },
+    {
+      "file": "chunk_0510_2295.png",
+      "row": 510,
+      "col": 9795
+    },
+    {
+      "file": "chunk_0765_0000.png",
+      "row": 765,
+      "col": 7500
+    },
+    {
+      "file": "chunk_0765_0255.png",
+      "row": 765,
+      "col": 7755
+    },
+    {
+      "file": "chunk_0765_0510.png",
+      "row": 765,
+      "col": 8010
+    },
+    {
+      "file": "chunk_0765_0765.png",
+      "row": 765,
+      "col": 8265
+    },
+    {
+      "file": "chunk_0765_1020.png",
+      "row": 765,
+      "col": 8520
+    },
+    {
+      "file": "chunk_0765_1275.png",
+      "row": 765,
+      "col": 8775
+    },
+    {
+      "file": "chunk_0765_1530.png",
+      "row": 765,
+      "col": 9030
+    },
+    {
+      "file": "chunk_0765_1785.png",
+      "row": 765,
+      "col": 9285
+    },
+    {
+      "file": "chunk_0765_2040.png",
+      "row": 765,
+      "col": 9540
+    },
+    {
+      "file": "chunk_0765_2295.png",
+      "row": 765,
+      "col": 9795
+    },
+    {
+      "file": "chunk_1020_0000.png",
+      "row": 1020,
+      "col": 7500
+    },
+    {
+      "file": "chunk_1020_0255.png",
+      "row": 1020,
+      "col": 7755
+    },
+    {
+      "file": "chunk_1020_0510.png",
+      "row": 1020,
+      "col": 8010
+    },
+    {
+      "file": "chunk_1020_0765.png",
+      "row": 1020,
+      "col": 8265
+    },
+    {
+      "file": "chunk_1020_1020.png",
+      "row": 1020,
+      "col": 8520
+    },
+    {
+      "file": "chunk_1020_1275.png",
+      "row": 1020,
+      "col": 8775
+    },
+    {
+      "file": "chunk_1020_1530.png",
+      "row": 1020,
+      "col": 9030
+    },
+    {
+      "file": "chunk_1020_1785.png",
+      "row": 1020,
+      "col": 9285
+    },
+    {
+      "file": "chunk_1020_2040.png",
+      "row": 1020,
+      "col": 9540
+    },
+    {
+      "file": "chunk_1020_2295.png",
+      "row": 1020,
+      "col": 9795
+    },
+    {
+      "file": "chunk_1275_0000.png",
+      "row": 1275,
+      "col": 7500
+    },
+    {
+      "file": "chunk_1275_0255.png",
+      "row": 1275,
+      "col": 7755
+    },
+    {
+      "file": "chunk_1275_0510.png",
+      "row": 1275,
+      "col": 8010
+    },
+    {
+      "file": "chunk_1275_0765.png",
+      "row": 1275,
+      "col": 8265
+    },
+    {
+      "file": "chunk_1275_1020.png",
+      "row": 1275,
+      "col": 8520
+    },
+    {
+      "file": "chunk_1275_1275.png",
+      "row": 1275,
+      "col": 8775
+    },
+    {
+      "file": "chunk_1275_1530.png",
+      "row": 1275,
+      "col": 9030
+    },
+    {
+      "file": "chunk_1275_1785.png",
+      "row": 1275,
+      "col": 9285
+    },
+    {
+      "file": "chunk_1275_2040.png",
+      "row": 1275,
+      "col": 9540
+    },
+    {
+      "file": "chunk_1275_2295.png",
+      "row": 1275,
+      "col": 9795
+    },
+    {
+      "file": "chunk_1530_0000.png",
+      "row": 1530,
+      "col": 7500
+    },
+    {
+      "file": "chunk_1530_0255.png",
+      "row": 1530,
+      "col": 7755
+    },
+    {
+      "file": "chunk_1530_0510.png",
+      "row": 1530,
+      "col": 8010
+    },
+    {
+      "file": "chunk_1530_0765.png",
+      "row": 1530,
+      "col": 8265
+    },
+    {
+      "file": "chunk_1530_1020.png",
+      "row": 1530,
+      "col": 8520
+    },
+    {
+      "file": "chunk_1530_1275.png",
+      "row": 1530,
+      "col": 8775
+    },
+    {
+      "file": "chunk_1530_1530.png",
+      "row": 1530,
+      "col": 9030
+    },
+    {
+      "file": "chunk_1530_1785.png",
+      "row": 1530,
+      "col": 9285
+    },
+    {
+      "file": "chunk_1530_2040.png",
+      "row": 1530,
+      "col": 9540
+    },
+    {
+      "file": "chunk_1530_2295.png",
+      "row": 1530,
+      "col": 9795
+    },
+    {
+      "file": "chunk_1785_0000.png",
+      "row": 1785,
+      "col": 7500
+    },
+    {
+      "file": "chunk_1785_0255.png",
+      "row": 1785,
+      "col": 7755
+    },
+    {
+      "file": "chunk_1785_0510.png",
+      "row": 1785,
+      "col": 8010
+    },
+    {
+      "file": "chunk_1785_0765.png",
+      "row": 1785,
+      "col": 8265
+    },
+    {
+      "file": "chunk_1785_1020.png",
+      "row": 1785,
+      "col": 8520
+    },
+    {
+      "file": "chunk_1785_1275.png",
+      "row": 1785,
+      "col": 8775
+    },
+    {
+      "file": "chunk_1785_1530.png",
+      "row": 1785,
+      "col": 9030
+    },
+    {
+      "file": "chunk_1785_1785.png",
+      "row": 1785,
+      "col": 9285
+    },
+    {
+      "file": "chunk_1785_2040.png",
+      "row": 1785,
+      "col": 9540
+    },
+    {
+      "file": "chunk_1785_2295.png",
+      "row": 1785,
+      "col": 9795
+    },
+    {
+      "file": "chunk_2040_0000.png",
+      "row": 2040,
+      "col": 7500
+    },
+    {
+      "file": "chunk_2040_0255.png",
+      "row": 2040,
+      "col": 7755
+    },
+    {
+      "file": "chunk_2040_0510.png",
+      "row": 2040,
+      "col": 8010
+    },
+    {
+      "file": "chunk_2040_0765.png",
+      "row": 2040,
+      "col": 8265
+    },
+    {
+      "file": "chunk_2040_1020.png",
+      "row": 2040,
+      "col": 8520
+    },
+    {
+      "file": "chunk_2040_1275.png",
+      "row": 2040,
+      "col": 8775
+    },
+    {
+      "file": "chunk_2040_1530.png",
+      "row": 2040,
+      "col": 9030
+    },
+    {
+      "file": "chunk_2040_1785.png",
+      "row": 2040,
+      "col": 9285
+    },
+    {
+      "file": "chunk_2040_2040.png",
+      "row": 2040,
+      "col": 9540
+    },
+    {
+      "file": "chunk_2040_2295.png",
+      "row": 2040,
+      "col": 9795
+    },
+    {
+      "file": "chunk_2295_0000.png",
+      "row": 2295,
+      "col": 7500
+    },
+    {
+      "file": "chunk_2295_0255.png",
+      "row": 2295,
+      "col": 7755
+    },
+    {
+      "file": "chunk_2295_0510.png",
+      "row": 2295,
+      "col": 8010
+    },
+    {
+      "file": "chunk_2295_0765.png",
+      "row": 2295,
+      "col": 8265
+    },
+    {
+      "file": "chunk_2295_1020.png",
+      "row": 2295,
+      "col": 8520
+    },
+    {
+      "file": "chunk_2295_1275.png",
+      "row": 2295,
+      "col": 8775
+    },
+    {
+      "file": "chunk_2295_1530.png",
+      "row": 2295,
+      "col": 9030
+    },
+    {
+      "file": "chunk_2295_1785.png",
+      "row": 2295,
+      "col": 9285
+    },
+    {
+      "file": "chunk_2295_2040.png",
+      "row": 2295,
+      "col": 9540
+    },
+    {
+      "file": "chunk_2295_2295.png",
+      "row": 2295,
+      "col": 9795
+    }
+  ]
+}

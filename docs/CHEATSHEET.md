@@ -83,6 +83,44 @@ python scripts/convert_terrain.py \
   --format r16
 ```
 
+### Photo textures from XYZ map tiles
+```bash
+# Render one PNG per heightmap chunk from satellite tiles (no auth needed).
+# Default source: ESRI World Imagery — attribution required for non-commercial use.
+python scripts/maptiles_to_chunks.py \
+  --heights terrain_data/raw_height \
+  --output  terrain_data/ortho \
+  --zoom    16                # 16 ≈ 1 m/px, 17 ≈ 0.5 m/px, 18 ≈ 0.25 m/px
+
+# Other XYZ providers
+python scripts/maptiles_to_chunks.py \
+  --heights terrain_data/raw_height \
+  --output  terrain_data/ortho \
+  --url     'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
+
+# Test with a few chunks first
+python scripts/maptiles_to_chunks.py --heights terrain_data/raw_height \
+  --output terrain_data/ortho --zoom 16 --limit 12
+```
+
+### Photo textures from Lantmäteriet Ortofoto (alternative)
+```bash
+# Discover collection IDs for the current Lantmäteriet ortofoto STAC
+python scripts/download_ortofoto.py --list-collections
+
+# Download (Geotorget needs a separate "Ortofoto Nedladdning" order on top of Markhöjdmodell)
+python scripts/download_ortofoto.py \
+  --collection orto-are-2024 \
+  --bbox 13.0 63.32 13.2 63.44 \
+  --output terrain_data/raw_ortho
+
+# Slice each GeoTIFF into chunk-aligned PNGs
+python scripts/convert_ortofoto.py --batch \
+  --input terrain_data/raw_ortho \
+  --output terrain_data/ortho \
+  --texture-size 256
+```
+
 ## Godot Development
 
 See `README.md` for the canonical project layout. The terrain-relevant

@@ -12,6 +12,11 @@ ambient_light_color = Color(0.78, 0.84, 0.92, 1)
 ambient_light_energy = 0.75
 tonemap_mode = 2
 tonemap_exposure = 1.05
+fog_enabled = true
+fog_light_color = Color(0.72, 0.82, 0.94, 1)
+fog_light_energy = 1.0
+fog_density = 0.00015
+fog_aerial_perspective = 0.3
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1")
@@ -28,18 +33,25 @@ environment = SubResource("env")
 [node name="TerrainLoader" type="Node3D" parent="."]
 script = ExtResource("2")
 height_directory = "res://terrain_data/raw_height"
+ortho_directory = "res://terrain_data/ortho"
+super_near_load_radius = 2
 load_radius = 6
-unload_radius = 8
+far_load_radius = 24
+horizon_load_radius = 60
+unload_radius = 64
 chunk_size = 256
 overlap = 1
 height_scale = 1.0
-visual_lod_step = 4
+super_near_visual_lod_step = 2
+visual_lod_step = 8
+far_visual_lod_step = 32
+horizon_visual_lod_step = 64
 collision_lod_step = 8
 
 [node name="Camera" type="Camera3D" parent="."]
 script = ExtResource("3")
 near = 0.5
-far = 12000.0
+far = 20000.0
 orbit_radius = 900.0
 orbit_height = 280.0
 orbit_speed = 0.12

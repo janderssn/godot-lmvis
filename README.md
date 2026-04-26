@@ -16,7 +16,7 @@ The current build is a **terrain-only foundation** — orbit/fly camera over the
 │   ├── terrain_camera.gd     # Orbit / fly camera with mouse-look in fly mode
 │   ├── terrain_chunk.gd      # Per-chunk heightmap → ArrayMesh + collision
 │   └── terrain_chunk_loader.gd  # Streaming, halo loading, cross-chunk sampling
-├── scripts/                   # Python pipeline: download + convert terrain
+├── scripts/                   # Python pipeline: heights, optional ortofoto, optional XYZ map tiles
 ├── docs/
 │   ├── TERRAIN_DATA.md       # Heightmap chunk format + dataset manifest
 │   ├── LANTMATERIET_SETUP.md # Geotorget account + STAC API setup
@@ -49,6 +49,45 @@ python scripts/quick_download.py central --process
 
 # 5. Open project.godot in Godot and press F5
 ```
+
+### Optional: photo-textured terrain
+
+Near-tier chunks can render with real satellite imagery instead of the procedural grass/rock blend, by populating `terrain_data/ortho/` with a 256×256 PNG per heightmap chunk. Two routes:
+
+#### Route A — XYZ map tiles (no extra auth, recommended)
+
+`scripts/maptiles_to_chunks.py` pulls Web Mercator tiles from any XYZ provider, reprojects them to SWEREF99 TM, and writes one PNG per heightmap chunk:
+
+```bash
+python scripts/maptiles_to_chunks.py \
+    --heights terrain_data/raw_height \
+    --output  terrain_data/ortho \
+    --zoom    16              # ~1 m/px at 63°N; 17 ≈ 0.5 m/px, 18 ≈ 0.25 m/px
+```
+
+Default source is **ESRI World Imagery** (the QGIS satellite default — free for development/non-commercial use, requires a "Imagery © Esri, Maxar, Earthstar Geographics" attribution somewhere visible in your final game UI). Override with `--url '<template with {z}/{x}/{y}>'` for other providers. Most providers' ToS restrict commercial use without an API key — check before shipping.
+
+Mercator tiles cache under `terrain_data/maptile_cache/`, so re-runs at a different zoom only fetch the new resolution.
+
+#### Route B — Lantmäteriet Ortofoto
+
+Lantmäteriet ships an Ortofoto product on the same Geotorget account (same credentials as the heightmap). It's CC BY-licensed and matches the heightmap's tile grid exactly. Order *Ortofoto Nedladdning* on Geotorget first (see `docs/LANTMATERIET_SETUP.md`), then:
+
+```bash
+python scripts/download_ortofoto.py --list-collections      # find the right collection ID
+python scripts/download_ortofoto.py \
+    --collection orto-are-2024 \
+    --bbox 13.0 63.32 13.2 63.44 \
+    --output terrain_data/raw_ortho
+python scripts/convert_ortofoto.py --batch \
+    --input terrain_data/raw_ortho \
+    --output terrain_data/ortho \
+    --texture-size 256
+```
+
+#### How the textures get used
+
+The `TerrainLoader` node's `ortho_directory` (default `res://terrain_data/ortho`) tells the chunk loader where to look. When a chunk has a matching PNG, `_resolve_material` swaps in a per-chunk `ShaderMaterial` with the texture bound; otherwise it falls back to the procedural slope/elevation shader. **Only near-tier chunks get textures** — far + horizon stay procedural to keep memory in check.
 
 See `docs/LANTMATERIET_SETUP.md` for credential details, `docs/TERRAIN_DATA.md` for the chunk format, and `docs/CHEATSHEET.md` for download/convert commands.
 
