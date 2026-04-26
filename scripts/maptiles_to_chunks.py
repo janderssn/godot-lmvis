@@ -279,13 +279,18 @@ def main():
 
             out_path = out_tile_dir / f"{stem}.png"
             try:
+                # Texture spans chunk_step (255 m) of ground — that's the
+                # vertex-to-vertex distance on the chunk mesh (256 samples at
+                # 1 m resolution = 255 m between sample 0 and sample 255).
+                # Using chunk_size (256) here would inflate the texture by 1 m
+                # and cause sub-pixel drift across every chunk seam.
                 ok = render_chunk(
                     src,
                     sweref_to_lonlat,
                     lonlat_to_mercator,
                     sweref_origin_x,
                     sweref_origin_y,
-                    chunk_size,
+                    chunk_step,
                     out_path,
                     args.overwrite,
                 )
