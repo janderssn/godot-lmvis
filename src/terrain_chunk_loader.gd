@@ -94,6 +94,15 @@ func get_default_focus_position() -> Vector3:
 	return default_focus_position
 
 
+func get_stats() -> Dictionary:
+	return {
+		"loaded": loaded_chunks.size(),
+		"horizon_origins": _horizon_origins.size(),
+		"horizon_arrays": _horizon_chunk_arrays.size(),
+		"indexed": chunk_index.size(),
+	}
+
+
 func sweref_to_local(easting: float, northing: float) -> Vector3:
 	if dataset_manifest.is_empty():
 		return Vector3.ZERO

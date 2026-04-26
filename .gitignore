@@ -39,6 +39,8 @@ pip-log.txt
 # Terrain data — large generated binaries (regenerate via scripts/)
 terrain_data/raw/
 terrain_data/raw_ortho/
+terrain_data/raw_ortho_*/
+terrain_data/ortho_*/
 terrain_data/processed/
 terrain_data/processed_fixed/
 terrain_data/raw_height/**/*.raw
@@ -49,6 +51,7 @@ terrain_data/raw_height/**/*.tiff
 terrain_data/ortho/**/*.png
 terrain_data/ortho/**/*.jpg
 terrain_data/maptile_cache/
+terrain_data/maptile_cache_*/
 
 # Keep manifests so the data layout is documented
 !terrain_data/raw_height/**/*.json

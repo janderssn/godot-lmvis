@@ -118,6 +118,26 @@ The rendering pipeline is engineered around the awkward shape of Lantmäteriet t
 
 The shader (`terrain_chunk.gd`, inline) blends grass → tundra → rock → cliff based on world-space elevation and slope (computed in the vertex shader from `MODEL_MATRIX` so camera tilt doesn't change the shading).
 
+## Benchmarking
+
+In-engine perf overlay (top-left corner) shows FPS, frame time, draw calls, primitives, and chunk-loader stats. Toggle with `F3`.
+
+For headless-comparable measurements, run the deterministic camera-path benchmark from a shell:
+
+```bash
+scripts/bench.sh
+```
+
+It runs Godot, warms up for 2 seconds, then samples 15 seconds of camera motion around Åreskutan, and prints lines like:
+
+```
+BENCH end frames=910 duration_s=15.02
+BENCH stats avg_ms=16.51 min_ms=12.10 p50_ms=16.20 p95_ms=22.45 p99_ms=27.80 max_ms=39.10 fps_avg=60.6
+BENCH chunks loaded=178 horizon_origins=10000 horizon_arrays=10000 indexed=2600
+```
+
+Comparing branches/optimizations: `git checkout` each, run `scripts/bench.sh`, diff the `BENCH stats` lines. The `chunks loaded` count is useful for catching residency regressions like the horizon-tier issue from review of #1.
+
 ## Coordinate System
 
 - **Real world** — SWEREF 99 TM (EPSG:3006), 1 m per pixel.
