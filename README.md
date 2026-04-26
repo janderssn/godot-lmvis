@@ -122,17 +122,6 @@ The shader (`terrain_chunk.gd`, inline) blends grass → tundra → rock → cli
 - **Game world** — Godot Y-up, 1 unit = 1 m. World X = (easting − dataset origin), world Z = (max_northing − northing) so +Z corresponds to south.
 - `terrain_chunk_loader.sweref_to_local(easting, northing)` maps real coordinates into the game world. The Åreskutan summit / Toppstugan is hardcoded in `main.gd`.
 
-## Roadmap
-
-- [x] Terrain data pipeline (download + convert)
-- [x] Streamed chunk loading with seamless cross-tile meshing
-- [x] Orbit + fly camera
-- [ ] Skier physics (`CharacterBody3D` against the streamed collision)
-- [ ] Third-person follow camera
-- [ ] Trick system (grabs, spins, flips)
-- [ ] Race gates / checkpoints
-- [ ] Åre landmarks (Kabinbanan, Toppstugan, lifts)
-
 ## License
 
 Game code: MIT. Terrain data: © Lantmäteriet, redistributed under their open data terms (see [Lantmäteriet open data](https://www.lantmateriet.se/en/geodata/geodata-products/open-data/)).
