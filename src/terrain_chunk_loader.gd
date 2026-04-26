@@ -255,24 +255,29 @@ func _stream_around_position(pos: Vector3, bulk: bool):
 
 	var mesh_budget = 999999 if bulk else max_mesh_gens_per_frame
 	for origin in desired_meshes:
+		var params = desired_meshes[origin]
+		var horizon: bool = params["horizon"]
+
+		# Horizon classification doesn't depend on the chunk being loaded —
+		# the build loop below will lazy-load + bake + unload as needed.
+		if horizon:
+			if not _horizon_origins.has(origin):
+				_horizon_origins[origin] = true
+				_horizon_mesh_dirty = true
+			if loaded_chunks.has(origin):
+				var existing = loaded_chunks[origin]
+				if existing.mesh_generated:
+					existing.clear_mesh()
+					_horizon_mesh_dirty = true
+			continue
+
 		if mesh_budget <= 0:
 			break
 		if not loaded_chunks.has(origin):
 			continue
 		var chunk = loaded_chunks[origin]
-		var params = desired_meshes[origin]
 		var step: int = params["lod"]
 		var collision: bool = params["collision"]
-		var horizon: bool = params["horizon"]
-
-		if horizon:
-			if chunk.mesh_generated:
-				chunk.clear_mesh()
-				_horizon_mesh_dirty = true
-			if not _horizon_origins.has(origin):
-				_horizon_origins[origin] = true
-				_horizon_mesh_dirty = true
-			continue
 
 		if _horizon_origins.has(origin):
 			_horizon_origins.erase(origin)
@@ -296,7 +301,7 @@ func _stream_around_position(pos: Vector3, bulk: bool):
 			_horizon_mesh_dirty = true
 
 	for origin in _horizon_chunk_arrays.keys():
-		if not _horizon_origins.has(origin) or not loaded_chunks.has(origin):
+		if not _horizon_origins.has(origin):
 			_horizon_chunk_arrays.erase(origin)
 			_horizon_mesh_dirty = true
 
@@ -306,15 +311,29 @@ func _stream_around_position(pos: Vector3, bulk: bool):
 			break
 		if _horizon_chunk_arrays.has(origin):
 			continue
+
+		# Lazy-load heightmap if needed: horizon-only origins aren't in
+		# desired_data, so we materialize the chunk just long enough to
+		# extract its triangles, then drop it (unless something else — a
+		# near/far chunk's halo — wants the data resident).
+		var loaded_for_build := false
+		if not loaded_chunks.has(origin):
+			_load_chunk_data(origin)
+			loaded_for_build = true
 		if not loaded_chunks.has(origin):
 			continue
 		var chunk = loaded_chunks[origin]
 		var arrays = chunk.build_world_triangles(horizon_visual_lod_step)
-		if arrays.is_empty():
-			continue
-		_horizon_chunk_arrays[origin] = arrays
-		_horizon_mesh_dirty = true
-		build_budget -= 1
+		if not arrays.is_empty():
+			_horizon_chunk_arrays[origin] = arrays
+			_horizon_mesh_dirty = true
+			build_budget -= 1
+
+		# Unload the chunk if nothing else needs the heightmap. Triangles
+		# are already cached in _horizon_chunk_arrays, independent of the
+		# chunk node.
+		if loaded_for_build and not desired_data.has(origin):
+			_unload_chunk(origin)
 
 	if _horizon_thread and not _horizon_thread.is_alive():
 		var result: Array = _horizon_thread.wait_to_finish()
@@ -394,7 +413,11 @@ func _recompute_desired(focus_2d: Vector2):
 						"collision": false,
 						"horizon": true,
 					}
-					_cached_desired_data[origin] = true
+					# Horizon-only origins are intentionally NOT in
+					# desired_data: their geometry is baked into the merged
+					# horizon mesh once, then their per-chunk heightmap is
+					# unloaded. They may still end up in desired_data via the
+					# halo of a near/far chunk below, which is fine.
 
 	for desired in _cached_desired_meshes.keys():
 		if _cached_desired_meshes[desired]["horizon"]:
