@@ -1,4 +1,4 @@
-# Åre Steep - Command Cheat Sheet
+# godot-lmvis - Command Cheat Sheet
 
 ## Setup & Environment
 
@@ -153,7 +153,7 @@ mouse_sensitivity = 0.003
 
 ```bash
 # Clone repo (when you put it on GitHub)
-git clone https://github.com/yourusername/are-steep-game.git
+git clone https://github.com/yourusername/godot-lmvis.git
 
 # Never commit terrain data
 echo "terrain_data/raw/*.tif" >> .gitignore

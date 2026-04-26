@@ -8,7 +8,7 @@
 
 [application]
 
-config/name="Åre Steep"
+config/name="godot-lmvis"
 config/description="A skiing and snowboarding game set in Åre, Sweden using real terrain data from Lantmäteriet"
 config/version="0.1.0"
 config/tags=PackedStringArray("skiing", "snowboarding", "terrain", "sweden")

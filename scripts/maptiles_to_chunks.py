@@ -43,7 +43,7 @@ DEFAULT_URL = (
     "https://server.arcgisonline.com/ArcGIS/rest/services/"
     "World_Imagery/MapServer/tile/{z}/{y}/{x}"
 )
-DEFAULT_USER_AGENT = "are-steep-game/0.1 (terrain texturing)"
+DEFAULT_USER_AGENT = "godot-lmvis/0.1 (terrain texturing)"
 TILE_PX = 256
 CHUNK_PX = 256                 # output chunk PNG size
 HEIGHT_CHUNK_SAMPLES = 256     # samples in heightmap chunk grid

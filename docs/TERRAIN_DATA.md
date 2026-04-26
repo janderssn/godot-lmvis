@@ -4,12 +4,7 @@ This document explains how to download real terrain data from Lantmäteriet (Swe
 
 ## Credentials
 
-```
-Username: your_email@example.com
-Password: your_password
-```
-
-Register at: https://geotorget.lantmateriet.se
+Register at https://geotorget.lantmateriet.se and order *Markhöjdmodell Nedladdning*. Put the resulting username/password in environment variables or a local `.env` (gitignored) — see `docs/LANTMATERIET_SETUP.md`.
 
 ## 1. Download Terrain via STAC API
 
@@ -26,7 +21,7 @@ HTTP Basic Auth with your Geotorget credentials.
 ### Download Command
 
 ```bash
-cd /home/joel/dev/are-steep-game
+cd /home/joel/dev/godot-lmvis
 
 # Option 1: Using environment variables
 export LANTMATERIET_USERNAME="your_email@example.com"
@@ -130,7 +125,7 @@ Each `chunks_manifest.json` contains:
 ### Project Structure
 
 ```
-are-steep-game/
+godot-lmvis/
 ├── scenes/
 │   └── main.tscn              # Main scene with terrain loader
 ├── src/

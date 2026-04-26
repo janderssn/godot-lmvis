@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Quick terrain download helper for Åre Steep.
+Quick terrain download helper for godot-lmvis.
 Simplifies downloading terrain data with sensible defaults.
 
 Usage:
@@ -23,7 +23,7 @@ from convert_terrain import batch_convert_files
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Quick terrain download for Åre Steep",
+        description="Quick terrain download for godot-lmvis",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Environment variables:

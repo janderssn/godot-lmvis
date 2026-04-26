@@ -75,7 +75,7 @@ source ~/.bashrc  # or ~/.zshrc
 Create a `.env` file in the project root:
 
 ```bash
-cd /home/joel/dev/are-steep-game
+cd /home/joel/dev/godot-lmvis
 cat > .env << 'EOF'
 LANTMATERIET_USERNAME=your_email@example.com
 LANTMATERIET_PASSWORD=your_password
@@ -104,7 +104,7 @@ python download_terrain.py --region are_central \
 Run a dry-run to verify everything works:
 
 ```bash
-cd /home/joel/dev/are-steep-game/scripts
+cd /home/joel/dev/godot-lmvis/scripts
 python download_terrain.py --region are_central --dry-run
 ```
 

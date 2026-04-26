@@ -1,4 +1,4 @@
-# Åre Steep
+# godot-lmvis
 
 Real-terrain rendering foundation for a skiing/snowboarding game set in Åre, Sweden. Uses 1-meter resolution heightmap data from Lantmäteriet (Swedish mapping authority), streamed as chunks into Godot 4 with seamless cross-chunk meshing and slope/elevation-based shading.
 
