@@ -15,11 +15,29 @@ Default XYZ source is ESRI World Imagery — fine for development/non-commercial
 For other providers (OSM, Mapbox, etc.), pass --url. Respect each provider's
 attribution + ToS.
 
+URL placeholders supported:
+    {z}, {x}, {y}     standard XYZ (top-left origin)
+    {iy}              TMS-style inverted Y (bottom-left origin), for sources
+                      like Eniro that speak tms1.0.0
+
 Usage:
     python scripts/maptiles_to_chunks.py \\
         --heights terrain_data/raw_height \\
         --output  terrain_data/ortho \\
         --zoom    16
+
+PERSONAL EXPLORATION ONLY — Eniro example:
+
+    python scripts/maptiles_to_chunks.py \\
+        --heights terrain_data/raw_height --output terrain_data/ortho \\
+        --zoom 19 \\
+        --url 'https://map.eniro.com/geowebcache/service/tms1.0.0/aerial/{z}/{x}/{iy}.jpeg'
+
+    Eniro's tile service is intended for use through their own map widget;
+    scraping tiles for redistribution violates their ToS, and the underlying
+    imagery is licensed from Lantmäteriet under restrictions Eniro carries.
+    For a properly licensed equivalent of the same 0.16 m source imagery,
+    order *Ortofoto Nedladdning* on Geotorget and use download_ortofoto.py.
 """
 
 import argparse
@@ -78,7 +96,8 @@ def fetch_tile(session, url_tmpl: str, z: int, x: int, y: int, cache: Path) -> P
     p = cache / str(z) / str(x) / f"{y}.png"
     if p.exists() and p.stat().st_size > 0:
         return p
-    url = url_tmpl.format(z=z, x=x, y=y)
+    iy = (1 << z) - 1 - y  # TMS-style inverted Y for sources like Eniro
+    url = url_tmpl.format(z=z, x=x, y=y, iy=iy)
     p.parent.mkdir(parents=True, exist_ok=True)
     for attempt in range(3):
         try:
