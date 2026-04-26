@@ -1,28 +1,28 @@
 # godot-lmvis
 
-Real-terrain rendering foundation for a skiing/snowboarding game set in Åre, Sweden. Uses 1-meter resolution heightmap data from Lantmäteriet (Swedish mapping authority), streamed as chunks into Godot 4 with seamless cross-chunk meshing and slope/elevation-based shading.
+Real-terrain rendering of terrain data of 1-meter resolution heightmap data from Lantmäteriet (Swedish mapping authority), streamed as chunks into Godot 4 with seamless cross-chunk meshing and slope/elevation-based shading.
 
-The current build is a **terrain-only foundation** — orbit/fly camera over the Åreskutan summit. Player physics, tricks, and game systems are planned on top of it.
+The current build is a **terrain-only foundation** — orbit/fly camera over the Åreskutan summit.
 
 ## Project Layout
 
 ```
 .
-├── project.godot              # Godot 4 project
+├── project.godot                # Godot 4 project
 ├── scenes/
-│   └── main.tscn             # Foundation scene (orbit + fly cam over Åreskutan)
+│   └── main.tscn                # Foundation scene (orbit + fly cam over Åreskutan)
 ├── src/
-│   ├── main.gd               # Wires terrain loader + camera, focuses on Toppstugan
-│   ├── terrain_camera.gd     # Orbit / fly camera with mouse-look in fly mode
-│   ├── terrain_chunk.gd      # Per-chunk heightmap → ArrayMesh + collision
+│   ├── main.gd                  # Wires terrain loader + camera, focuses on Toppstugan
+│   ├── terrain_camera.gd        # Orbit / fly camera with mouse-look in fly mode
+│   ├── terrain_chunk.gd         # Per-chunk heightmap → ArrayMesh + collision
 │   └── terrain_chunk_loader.gd  # Streaming, halo loading, cross-chunk sampling
-├── scripts/                   # Python pipeline: heights, optional ortofoto, optional XYZ map tiles
+├── scripts/                     # Python pipeline: heights, optional ortofoto, optional XYZ map tiles
 ├── docs/
-│   ├── TERRAIN_DATA.md       # Heightmap chunk format + dataset manifest
-│   ├── LANTMATERIET_SETUP.md # Geotorget account + STAC API setup
-│   └── CHEATSHEET.md         # Common command reference
-├── terrain_data/              # Generated heightmap data (gitignored, except manifests)
-└── setup.sh                   # Environment sanity check
+│   ├── TERRAIN_DATA.md          # Heightmap chunk format + dataset manifest
+│   ├── LANTMATERIET_SETUP.md    # Geotorget account + STAC API setup
+│   └── CHEATSHEET.md            # Common command reference
+├── terrain_data/                # Generated heightmap data (gitignored, except manifests)
+└── setup.sh                     # Environment sanity check
 ```
 
 ## Prerequisites
