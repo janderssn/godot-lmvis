@@ -244,6 +244,10 @@ def main():
     p.add_argument("--user-agent", default=DEFAULT_USER_AGENT)
     p.add_argument("--overwrite", action="store_true")
     p.add_argument("--limit", type=int, help="cap chunks for a quick test")
+    p.add_argument("--center-sweref", nargs=2, type=float, metavar=("EASTING", "NORTHING"),
+                   help="Only render chunks whose center is within --radius-m of this point (SWEREF99 TM)")
+    p.add_argument("--radius-m", type=float, default=0.0,
+                   help="Distance from --center-sweref in meters; 0 = no filter")
     args = p.parse_args()
 
     heights = Path(args.heights)
@@ -295,6 +299,14 @@ def main():
 
             sweref_origin_x = west_e + col
             sweref_origin_y = (south_n + tile_size_m) - (row + chunk_step)
+
+            if args.center_sweref and args.radius_m > 0:
+                cx = sweref_origin_x + chunk_size / 2.0
+                cy = sweref_origin_y + chunk_size / 2.0
+                dx = cx - args.center_sweref[0]
+                dy = cy - args.center_sweref[1]
+                if dx * dx + dy * dy > args.radius_m * args.radius_m:
+                    continue
 
             out_path = out_tile_dir / f"{stem}.png"
             try:
