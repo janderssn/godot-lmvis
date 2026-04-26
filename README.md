@@ -1,6 +1,6 @@
 # godot-lmvis
 
-![Åreskutan rendered from Lantmäteriet 1m heightmap with ESRI World Imagery overlay](screenshot.png)
+![Åreskutan rendered from Lantmäteriet 1m heightmap with ESRI World Imagery overlay](screenshot.jpg)
 
 Real-terrain rendering of terrain data of 1-meter resolution heightmap data from Lantmäteriet (Swedish mapping authority), streamed as chunks into Godot 4 with seamless cross-chunk meshing and slope/elevation-based shading.
 
